@@ -86,5 +86,22 @@ Le projet force l'UTF-8, mais assurez-vous que votre terminal Windows est compat
 * **Frontend :** Electron, HTML5, CSS3 (Vanilla JS pour la performance).
 * **Communication :** API REST locale (localhost:8000).
 
+## 🗺️ Roadmap : Vers une v2.0
+
+Le projet est fonctionnel mais utilise des méthodes "brutes" pour le moment. L'objectif est de professionnaliser l'architecture technique.
+
+| Statut | Catégorie | Tâche | Détails |
+| :--- | :--- | :--- | :--- |
+| ⬜ | **Distribution** | Création d'un installateur (.exe) | Remplacer le lancement via `.bat` et `.vbs` par un vrai installateur Windows (via *Electron Forge* ou *PyInstaller*). |
+| ⬜ | **Frontend** | Refonte React/Vite | Migrer l'interface vanilla JS vers **React + Tailwind** pour une meilleure gestion d'état et un design plus robuste. |
+| ⬜ | **Core** | Streaming Temps Réel | Afficher le texte **pendant** que l'utilisateur parle (comme la dictée Siri) au lieu d'attendre la fin de la phrase. |
+| ⬜ | **Compatibilité** | Support Multi-GPU | Optimiser le backend pour supporter officiellement les GPU AMD (ROCm) et les puces Apple Silicon, en plus de Nvidia. |
+| ⬜ | **IA** | Post-traitement Intelligent | Connecter un petit LLM local pour corriger automatiquement la ponctuation et les hésitations ("euh...") après la transcription. |
+| ⬜ | **UX** | Auto-Updater | Intégrer un système de mise à jour automatique pour ne plus avoir à `git pull` manuellement. |
+
+*Légende : ✅ Fait | 🚧 En cours | ⬜ À faire*
+
+---
+
 ---
 *Développé avec ❤️ pour la productivité locale.*

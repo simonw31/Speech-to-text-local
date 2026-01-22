@@ -25,13 +25,21 @@ function createOverlay() {
     overlayWindow = new BrowserWindow({
         width: 380, height: 120,
         x: (width / 2) - 190, y: height - 150,
-        frame: false, transparent: true, alwaysOnTop: true, skipTaskbar: true,
+        frame: false, transparent: true, 
+        alwaysOnTop: true, // On le met ici, mais on le force plus bas
+        skipTaskbar: true,
         resizable: false, hasShadow: false, focusable: false,
         webPreferences: { nodeIntegration: true, contextIsolation: false }
     });
 
     overlayWindow.loadFile('index.html');
     overlayWindow.setIgnoreMouseEvents(true, { forward: true });
+
+    // --- CORRECTION PRIORITÉ D'AFFICHAGE ---
+    // "screen-saver" est le niveau le plus haut possible sur Windows (au-dessus du menu démarrer)
+    overlayWindow.setAlwaysOnTop(true, "screen-saver");
+    // S'assure que l'overlay suit sur tous les bureaux virtuels
+    overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 }
 
 function createDashboard() {
@@ -46,7 +54,7 @@ function createDashboard() {
         width: 650, height: 520, title: "Handy FR",
         frame: false, backgroundColor: '#1e1e1e',
         resizable: false, minimizable: true,
-        icon: path.join(__dirname, 'icon.png'), // Icône de la fenêtre aussi !
+        icon: path.join(__dirname, 'icon.png'),
         webPreferences: { nodeIntegration: true, contextIsolation: false }
     });
 
@@ -58,11 +66,8 @@ function createDashboard() {
 }
 
 function createTray() {
-    // On charge l'image icon.png
     const iconPath = path.join(__dirname, 'icon.png');
     const icon = nativeImage.createFromPath(iconPath);
-    
-    // Si l'image est trop grande, on la redimensionne proprement
     const trayIcon = icon.resize({ width: 16, height: 16 });
 
     tray = new Tray(trayIcon);
@@ -80,8 +85,9 @@ function createTray() {
 // --- APP LIFECYCLE ---
 app.whenReady().then(() => {
     startPythonBackend();
-    setTimeout(createOverlay, 300);
-    setTimeout(createDashboard, 600);
+    // On attend un tout petit peu que Windows soit bien réveillé
+    setTimeout(createOverlay, 500); 
+    setTimeout(createDashboard, 800);
     createTray();
 });
 

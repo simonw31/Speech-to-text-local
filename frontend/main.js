@@ -13,7 +13,6 @@ function startPythonBackend() {
     const scriptPath = path.join(__dirname, '..', 'backend', 'server.py');
 
     pythonProcess = spawn(pythonExecutable, [scriptPath]);
-    // On ne loggue plus rien pour éviter le bruit, sauf erreurs critiques
     pythonProcess.stderr.on('data', (data) => console.error(`[Python Err]: ${data}`));
 }
 
@@ -25,20 +24,28 @@ function createOverlay() {
     overlayWindow = new BrowserWindow({
         width: 380, height: 120,
         x: (width / 2) - 190, y: height - 150,
-        frame: false, transparent: true, 
-        alwaysOnTop: true, // On le met ici, mais on le force plus bas
+        frame: false, 
+        transparent: true, 
+        alwaysOnTop: true, 
         skipTaskbar: true,
-        resizable: false, hasShadow: false, focusable: false,
+        resizable: false, 
+        hasShadow: false, 
+        focusable: false,
         webPreferences: { nodeIntegration: true, contextIsolation: false }
     });
 
     overlayWindow.loadFile('index.html');
     overlayWindow.setIgnoreMouseEvents(true, { forward: true });
 
-    // --- CORRECTION PRIORITÉ D'AFFICHAGE ---
-    // "screen-saver" est le niveau le plus haut possible sur Windows (au-dessus du menu démarrer)
-    overlayWindow.setAlwaysOnTop(true, "screen-saver");
-    // S'assure que l'overlay suit sur tous les bureaux virtuels
+    // --- LE CHECK "DOUX" ---
+    // On rappelle à Windows de mettre la fenêtre au premier plan toutes les minutes (60000 ms)
+    setInterval(() => {
+        if (overlayWindow && !overlayWindow.isDestroyed()) {
+            overlayWindow.setAlwaysOnTop(true, "screen-saver");
+            overlayWindow.moveTop(); // Force le rafraîchissement visuel
+        }
+    }, 60000); 
+    
     overlayWindow.setVisibleOnAllWorkspaces(true, { visibleOnFullScreen: true });
 }
 
@@ -85,7 +92,6 @@ function createTray() {
 // --- APP LIFECYCLE ---
 app.whenReady().then(() => {
     startPythonBackend();
-    // On attend un tout petit peu que Windows soit bien réveillé
     setTimeout(createOverlay, 500); 
     setTimeout(createDashboard, 800);
     createTray();
